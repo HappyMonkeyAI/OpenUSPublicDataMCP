@@ -16,6 +16,7 @@ class Source:
 SOURCES = {
     "data_gov": Source("Data.gov", "https://data.gov/", True, "federal", "none", "US Government open data terms"),
     "census": Source("US Census Bureau", "https://api.census.gov/data.html", True, "federal", "optional_key", "US Government public data"),
+    "usaspending": Source("USAspending.gov", "https://api.usaspending.gov/", True, "federal", "none", "US Government public data"),
 }
 
 

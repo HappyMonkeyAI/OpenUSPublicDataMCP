@@ -40,6 +40,27 @@ def search_data_gov(query: str, limit: int = 10) -> dict[str, object]:
     return envelope(payload.get("result", {}), {"name": "Data.gov", "url": "https://catalog.data.gov/api/3/action/package_search", "official": True, "jurisdiction": "federal", "auth": "none"})
 
 
+@mcp.tool
+def get_census_state_population(year: int = 2022) -> dict[str, object]:
+    """Return Census ACS 5-year total population by US state for a supported year."""
+    if not 2009 <= year <= 2022:
+        raise ValueError("year must be between 2009 and 2022")
+    url = f"https://api.census.gov/data/{year}/acs/acs5"
+    response = httpx.get(url, params={"get": "NAME,B01001_001E", "for": "state:*"}, timeout=20)
+    response.raise_for_status()
+    rows = response.json()
+    return envelope({"columns": rows[0], "rows": rows[1:]}, {"name": "US Census Bureau ACS 5-year", "url": url, "official": True, "jurisdiction": "federal", "auth": "optional_key"})
+
+
+@mcp.tool
+def list_federal_agencies() -> dict[str, object]:
+    """Return federal agencies known to USAspending.gov without requiring an API key."""
+    url = "https://api.usaspending.gov/api/v2/references/toptier_agencies/"
+    response = httpx.get(url, timeout=20)
+    response.raise_for_status()
+    return envelope(response.json(), {"name": "USAspending.gov", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
+
+
 def main() -> None:
     mcp.run(show_banner=False, log_level="WARNING")
 
