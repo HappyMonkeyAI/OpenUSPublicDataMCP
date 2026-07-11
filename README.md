@@ -21,6 +21,8 @@ This is the US counterpart to `OpenUKPublicDataMCP`, but it deliberately separat
 - `search_socrata_catalog` and `query_socrata_dataset`
 - `query_arcgis_feature_service`
 - `search_ckan_catalog`
+- `list_curated_state_portals` — California, New York, Texas, Washington and Florida
+- `search_state_data` — dispatch to the selected state's curated portal
 - mocked tests and project verification spine
 
 ## Quick start

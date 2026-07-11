@@ -42,6 +42,13 @@
 - Add registry filtering by jurisdiction and platform.
 - Extend geography to counties, congressional districts and Census geographies.
 
+### Phase 5: Curated state packs
+
+- California: CKAN
+- New York, Texas and Washington: Socrata
+- Florida: ArcGIS Hub search
+- Add state-specific dataset fixtures and freshness/licence notes.
+
 ### Verification gates
 
 ```bash

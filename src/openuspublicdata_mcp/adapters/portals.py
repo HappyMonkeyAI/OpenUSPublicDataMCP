@@ -13,12 +13,15 @@ def _check_limit(limit: int) -> None:
         raise ValueError("limit must be between 1 and 100")
 
 
-def search_socrata(query: str, limit: int = 10) -> dict[str, Any]:
+def search_socrata(query: str, limit: int = 10, domain: str | None = None) -> dict[str, Any]:
     if not query.strip():
         raise ValueError("query must not be empty")
     _check_limit(limit)
     url = "https://api.us.socrata.com/api/catalog/v1"
-    return request_json("GET", url, params={"q": query, "limit": limit}, timeout=20)
+    params = {"q": query, "limit": limit}
+    if domain:
+        params["domains"] = domain
+    return request_json("GET", url, params=params, timeout=20)
 
 
 def query_socrata(domain: str, dataset_id: str, limit: int = 100) -> list[dict[str, Any]]:
@@ -27,6 +30,14 @@ def query_socrata(domain: str, dataset_id: str, limit: int = 100) -> list[dict[s
         raise ValueError("domain and dataset_id are required")
     url = f"https://{domain}/resource/{dataset_id}.json"
     return request_json("GET", url, params={"$limit": limit}, timeout=20)
+
+
+def search_arcgis_portal(portal_url: str, query: str, limit: int = 10) -> dict[str, Any]:
+    if not query.strip():
+        raise ValueError("query must not be empty")
+    _check_limit(limit)
+    url = f"{portal_url.rstrip('/')}/sharing/rest/search"
+    return request_json("GET", url, params={"q": query, "f": "json", "num": limit}, timeout=20)
 
 
 def query_arcgis(service_url: str, where: str = "1=1", limit: int = 100) -> dict[str, Any]:

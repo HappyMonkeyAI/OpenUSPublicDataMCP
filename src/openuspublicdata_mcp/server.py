@@ -11,6 +11,7 @@ from openuspublicdata_mcp.adapters.portals import query_arcgis, query_socrata, s
 from openuspublicdata_mcp.geography import resolve_state
 from openuspublicdata_mcp.http import request_json
 from openuspublicdata_mcp.sources import find_sources, list_sources
+from openuspublicdata_mcp.state_portals import list_state_portals, search_state_portal
 
 mcp = FastMCP("OpenUSPublicDataMCP")
 
@@ -47,6 +48,19 @@ def find_us_data_sources(jurisdiction: str | None = None, platform: str | None =
 def resolve_us_geography(location: str) -> dict[str, object]:
     """Resolve a US state name, abbreviation, or city/state string to state FIPS metadata."""
     return envelope(resolve_state(location), {"name": "US state FIPS registry", "url": "local://geography/states", "official": False, "jurisdiction": "federal", "auth": "none"})
+
+
+@mcp.tool
+def list_curated_state_portals() -> dict[str, object]:
+    """List the first curated state open-data portal pack."""
+    return envelope(list_state_portals(), {"name": "OpenUSPublicDataMCP state portal registry", "url": "local://state-portals", "official": False, "jurisdiction": "state_or_local", "auth": "none"})
+
+
+@mcp.tool
+def search_state_data(state: str, query: str, limit: int = 10) -> dict[str, object]:
+    """Search the curated official open-data portal for a supported US state."""
+    portal, data = search_state_portal(state, query, limit)
+    return envelope(data, {"name": f"{portal.state} open data portal", "url": portal.base_url, "official": portal.official, "jurisdiction": "state", "auth": "none", "platform": portal.platform})
 
 
 @mcp.tool
