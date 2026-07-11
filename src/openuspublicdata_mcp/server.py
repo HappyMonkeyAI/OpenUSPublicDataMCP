@@ -61,6 +61,33 @@ def list_federal_agencies() -> dict[str, object]:
     return envelope(response.json(), {"name": "USAspending.gov", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
 
 
+@mcp.tool
+def search_federal_register(query: str, limit: int = 10) -> dict[str, object]:
+    """Search official Federal Register documents by full-text term."""
+    if not query.strip():
+        raise ValueError("query must not be empty")
+    if not 1 <= limit <= 100:
+        raise ValueError("limit must be between 1 and 100")
+    url = "https://www.federalregister.gov/api/v1/documents.json"
+    response = httpx.get(url, params={"conditions[term]": query, "per_page": limit}, timeout=20)
+    response.raise_for_status()
+    return envelope(response.json(), {"name": "Federal Register", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
+
+
+@mcp.tool
+def search_usaspending_awards(query: str, limit: int = 10) -> dict[str, object]:
+    """Search federal spending awards by keyword through USAspending.gov."""
+    if not query.strip():
+        raise ValueError("query must not be empty")
+    if not 1 <= limit <= 100:
+        raise ValueError("limit must be between 1 and 100")
+    url = "https://api.usaspending.gov/api/v2/search/spending_by_award/"
+    payload = {"filters": {"keywords": [query], "award_type_codes": ["A", "B", "C", "D"]}, "fields": ["Award ID", "Award Description", "Award Amount", "Recipient Name"], "limit": limit, "page": 1}
+    response = httpx.post(url, json=payload, timeout=30)
+    response.raise_for_status()
+    return envelope(response.json(), {"name": "USAspending.gov", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
+
+
 def main() -> None:
     mcp.run(show_banner=False, log_level="WARNING")
 

@@ -15,8 +15,9 @@
 - Stabilise source registry and response contract.
 - Add Data.gov catalogue search and dataset retrieval.
 - Add Census geography/profile adapter.
-- Add Congress.gov and Federal Register search adapters.
-- Add USAspending award/search adapter.
+- Add Congress.gov search adapter (optional API key).
+- Add Federal Register search adapter.
+- Add USAspending agency and award/search adapters.
 - Add live smoke commands and fixtures.
 
 ### Phase 2: Federal breadth

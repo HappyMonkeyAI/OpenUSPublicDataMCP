@@ -13,6 +13,8 @@ This is the US counterpart to `OpenUKPublicDataMCP`, but it deliberately separat
 - `search_data_gov` against the official Data.gov CKAN API (endpoint under re-discovery after live 404)
 - `get_census_state_population` against the official Census ACS API (optional key)
 - `list_federal_agencies` against the official USAspending API (no key)
+- `search_federal_register` against the official Federal Register API (no key)
+- `search_usaspending_awards` against the official USAspending awards API (no key)
 - mocked tests and project verification spine
 
 ## Quick start
