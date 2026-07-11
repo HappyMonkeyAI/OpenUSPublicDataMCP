@@ -8,6 +8,8 @@
 
 **Tech Stack:** Python 3.11+, FastMCP, httpx, pytest, respx.
 
+**Q2 status:** Phases 1, 3, 4 and 5 are complete in the current foundation. Phase 2 federal breadth and the climate/environment vertical remain next.
+
 ---
 
 ### Phase 1: Federal foundations

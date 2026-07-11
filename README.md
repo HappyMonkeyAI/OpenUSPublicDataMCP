@@ -25,6 +25,10 @@ This is the US counterpart to `OpenUKPublicDataMCP`, but it deliberately separat
 - `search_state_data` — dispatch to the selected state's curated portal
 - mocked tests and project verification spine
 
+## Current status
+
+Q2 2026 validation is complete: 16 tools, five curated state portal packs, stdio and Streamable HTTP transport, DynamicMCPProxy catalogue metadata, and 20 passing tests. See `docs/tests/Q2-executive-report.md` for the evidence-based executive snapshot.
+
 ## Quick start
 
 ```bash

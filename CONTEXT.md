@@ -32,6 +32,20 @@ Build an agent-grade MCP gateway for high-value US public data. Start with feder
 }
 ```
 
+## Completed Q2 foundation
+
+- Federal tools: USAspending, Federal Register, Census and Congress.gov optional-key paths.
+- Generic Socrata, ArcGIS REST/Hub and CKAN adapters.
+- Curated state packs: CA, NY, TX, WA and FL.
+- Shared retrying HTTP helper, typed source metadata and state/FIPS resolution.
+- Stdio plus Streamable HTTP transport; HTTP MCP session verified with the MCP SDK.
+- DynamicMCPProxy catalogue artefact and Hermes setup documentation.
+- Q2 report: `docs/tests/Q2-executive-report.md`.
+
+## Next build slice
+
+Climate/environment vertical workflow across federal and state sources: NOAA/EPA adapters, curated environmental datasets, freshness/licence metadata, comparison tools, and county/Census geography.
+
 ## Planned source layers
 
 - Federal: Data.gov, Census, Congress.gov, Federal Register, USAspending, BLS, BEA, NOAA, EPA, FDA, CDC and USDA.
