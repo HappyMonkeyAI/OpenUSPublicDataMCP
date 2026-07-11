@@ -1,8 +1,20 @@
-{
-  "name": "openuspublicdata",
-  "display_name": "Open US Public Data",
-  "description": "Federal-first, source-cited US public data MCP",
-  "transport": "stdio",
-  "command": "/home/stephen/projects/OpenUSPublicDataMCP/.venv/bin/python",
-  "args": ["-m", "openuspublicdata_mcp.server"]
-}
+[
+  {
+    "name": "openus_public_data",
+    "description": "Federal-first US public data MCP with state portal adapters for California, New York, Texas, Washington and Florida",
+    "command": "uv",
+    "args": [
+      "run",
+      "--quiet",
+      "--project",
+      "/home/stephen/projects/OpenUSPublicDataMCP",
+      "openuspublicdata-mcp"
+    ],
+    "tags": ["usa", "government", "public-data", "federal", "state", "socrata", "arcgis", "ckan"],
+    "tech_stack": ["python", "fastmcp", "mcp"],
+    "runtime": "stdio",
+    "env_vars": ["CENSUS_API_KEY", "CONGRESS_API_KEY"],
+    "pick": ["data", "source", "retrieved_at"],
+    "token_budget": 16000
+  }
+]

@@ -46,3 +46,18 @@ fastmcp call src/openuspublicdata_mcp/server.py search_data_gov query='climate' 
 4. HTTP deployment, DynamicMCPProxy and Hermes registration.
 
 See `docs/plans/2026-07-11-openuspublicdata-mcp-bootstrap.md` and `research/LINKS.md`.
+
+## HTTP transport
+
+```bash
+OPENUS_PORT=8787 .venv/bin/openuspublicdata-http
+curl http://127.0.0.1:8787/health
+# MCP endpoint: http://127.0.0.1:8787/mcp
+```
+
+The DynamicMCPProxy catalogue entry is in `integrations/dynamic-mcp-proxy-user-catalogue-entry.json`. Hermes can use the stdio server directly:
+
+```bash
+hermes config set mcp_servers.openuspublicdata.command "/home/stephen/projects/OpenUSPublicDataMCP/.venv/bin/python"
+hermes config set mcp_servers.openuspublicdata.args '["-m", "openuspublicdata_mcp.server"]'
+```
