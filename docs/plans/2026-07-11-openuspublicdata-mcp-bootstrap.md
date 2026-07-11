@@ -14,10 +14,11 @@
 
 - Stabilise source registry and response contract.
 - Add Data.gov catalogue search and dataset retrieval.
-- Add Census geography/profile adapter.
+- Add Census geography/profile adapter (optional key).
 - Add Congress.gov search adapter (optional API key).
 - Add Federal Register search adapter.
 - Add USAspending agency and award/search adapters.
+- Add reusable Socrata, ArcGIS REST and CKAN platform adapters.
 - Add live smoke commands and fixtures.
 
 ### Phase 2: Federal breadth

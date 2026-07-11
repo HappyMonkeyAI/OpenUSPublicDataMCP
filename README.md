@@ -15,6 +15,10 @@ This is the US counterpart to `OpenUKPublicDataMCP`, but it deliberately separat
 - `list_federal_agencies` against the official USAspending API (no key)
 - `search_federal_register` against the official Federal Register API (no key)
 - `search_usaspending_awards` against the official USAspending awards API (no key)
+- `search_congress_bills` against the official Congress.gov API (optional key)
+- `search_socrata_catalog` and `query_socrata_dataset`
+- `query_arcgis_feature_service`
+- `search_ckan_catalog`
 - mocked tests and project verification spine
 
 ## Quick start
