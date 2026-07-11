@@ -1,0 +1,8 @@
+{
+  "name": "openuspublicdata",
+  "display_name": "Open US Public Data",
+  "description": "Federal-first, source-cited US public data MCP",
+  "transport": "stdio",
+  "command": "/home/stephen/projects/OpenUSPublicDataMCP/.venv/bin/python",
+  "args": ["-m", "openuspublicdata_mcp.server"]
+}
