@@ -7,8 +7,10 @@ from typing import Any
 import httpx
 from fastmcp import FastMCP
 
-from openuspublicdata_mcp.sources import list_sources
 from openuspublicdata_mcp.adapters.portals import query_arcgis, query_socrata, search_ckan, search_socrata
+from openuspublicdata_mcp.geography import resolve_state
+from openuspublicdata_mcp.http import request_json
+from openuspublicdata_mcp.sources import find_sources, list_sources
 
 mcp = FastMCP("OpenUSPublicDataMCP")
 
@@ -27,6 +29,24 @@ def health_check() -> dict[str, object]:
 def list_public_data_sources() -> dict[str, object]:
     """List registered US public-data sources with jurisdiction and authentication metadata."""
     return envelope(list_sources(), {"name": "OpenUSPublicDataMCP source registry", "url": "local://sources", "official": False, "jurisdiction": "federal", "auth": "none"})
+
+
+@mcp.tool
+def find_us_data_sources(jurisdiction: str | None = None, platform: str | None = None) -> dict[str, object]:
+    """Find registered sources by jurisdiction or platform, such as federal, socrata or ckan."""
+    allowed_jurisdictions = {"federal", "state_or_local"}
+    allowed_platforms = {"direct_api", "catalogue", "socrata", "arcgis", "ckan"}
+    if jurisdiction and jurisdiction not in allowed_jurisdictions:
+        raise ValueError(f"jurisdiction must be one of: {', '.join(sorted(allowed_jurisdictions))}")
+    if platform and platform not in allowed_platforms:
+        raise ValueError(f"platform must be one of: {', '.join(sorted(allowed_platforms))}")
+    return envelope(find_sources(jurisdiction, platform), {"name": "OpenUSPublicDataMCP source registry", "url": "local://sources", "official": False, "jurisdiction": "federal", "auth": "none"})
+
+
+@mcp.tool
+def resolve_us_geography(location: str) -> dict[str, object]:
+    """Resolve a US state name, abbreviation, or city/state string to state FIPS metadata."""
+    return envelope(resolve_state(location), {"name": "US state FIPS registry", "url": "local://geography/states", "official": False, "jurisdiction": "federal", "auth": "none"})
 
 
 @mcp.tool
@@ -53,9 +73,7 @@ def get_census_state_population(year: int = 2022) -> dict[str, object]:
     api_key = os.getenv("CENSUS_API_KEY")
     if not api_key:
         raise RuntimeError("CENSUS_API_KEY is required by the current Census API endpoint")
-    response = httpx.get(url, params={"get": "NAME,B01001_001E", "for": "state:*", "key": api_key}, timeout=20)
-    response.raise_for_status()
-    rows = response.json()
+    rows = request_json("GET", url, params={"get": "NAME,B01001_001E", "for": "state:*", "key": api_key}, timeout=20)
     return envelope({"columns": rows[0], "rows": rows[1:]}, {"name": "US Census Bureau ACS 5-year", "url": url, "official": True, "jurisdiction": "federal", "auth": "optional_key"})
 
 
@@ -63,9 +81,7 @@ def get_census_state_population(year: int = 2022) -> dict[str, object]:
 def list_federal_agencies() -> dict[str, object]:
     """Return federal agencies known to USAspending.gov without requiring an API key."""
     url = "https://api.usaspending.gov/api/v2/references/toptier_agencies/"
-    response = httpx.get(url, timeout=20)
-    response.raise_for_status()
-    return envelope(response.json(), {"name": "USAspending.gov", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
+    return envelope(request_json("GET", url, timeout=20), {"name": "USAspending.gov", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
 
 
 @mcp.tool
@@ -76,9 +92,7 @@ def search_federal_register(query: str, limit: int = 10) -> dict[str, object]:
     if not 1 <= limit <= 100:
         raise ValueError("limit must be between 1 and 100")
     url = "https://www.federalregister.gov/api/v1/documents.json"
-    response = httpx.get(url, params={"conditions[term]": query, "per_page": limit}, timeout=20)
-    response.raise_for_status()
-    return envelope(response.json(), {"name": "Federal Register", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
+    return envelope(request_json("GET", url, params={"conditions[term]": query, "per_page": limit}, timeout=20), {"name": "Federal Register", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
 
 
 @mcp.tool
@@ -90,9 +104,7 @@ def search_usaspending_awards(query: str, limit: int = 10) -> dict[str, object]:
         raise ValueError("limit must be between 1 and 100")
     url = "https://api.usaspending.gov/api/v2/search/spending_by_award/"
     payload = {"filters": {"keywords": [query], "award_type_codes": ["A", "B", "C", "D"]}, "fields": ["Award ID", "Award Description", "Award Amount", "Recipient Name"], "limit": limit, "page": 1}
-    response = httpx.post(url, json=payload, timeout=30)
-    response.raise_for_status()
-    return envelope(response.json(), {"name": "USAspending.gov", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
+    return envelope(request_json("POST", url, json=payload, timeout=30), {"name": "USAspending.gov", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
 
 
 @mcp.tool
@@ -106,9 +118,7 @@ def search_congress_bills(query: str, limit: int = 10) -> dict[str, object]:
     if not api_key:
         raise RuntimeError("CONGRESS_API_KEY is required by the Congress.gov API")
     url = "https://api.congress.gov/v3/bill"
-    response = httpx.get(url, params={"format": "json", "limit": limit, "api_key": api_key}, timeout=20)
-    response.raise_for_status()
-    return envelope(response.json(), {"name": "Congress.gov API", "url": url, "official": True, "jurisdiction": "federal", "auth": "optional_key"})
+    return envelope(request_json("GET", url, params={"format": "json", "limit": limit, "api_key": api_key}, timeout=20), {"name": "Congress.gov API", "url": url, "official": True, "jurisdiction": "federal", "auth": "optional_key"})
 
 
 @mcp.tool

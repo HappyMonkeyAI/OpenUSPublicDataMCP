@@ -35,6 +35,13 @@
 - Add jurisdiction registry and selected state packs.
 - Add local portal discovery; do not promise full local coverage.
 
+### Phase 4: Core hardening and geography
+
+- Use shared bounded HTTP retries and typed source metadata.
+- Resolve state names/abbreviations to state FIPS codes.
+- Add registry filtering by jurisdiction and platform.
+- Extend geography to counties, congressional districts and Census geographies.
+
 ### Verification gates
 
 ```bash
