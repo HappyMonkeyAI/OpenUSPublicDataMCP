@@ -24,10 +24,15 @@ dev = [
   "fastapi>=0.115.0",
   "uvicorn[standard]>=0.32.0",
 ]
+web = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.32.0",
+]
 
 [project.scripts]
 openuspublicdata-mcp = "openuspublicdata_mcp.server:main"
 openuspublicdata-http = "openuspublicdata_mcp.http_server:main"
+openuspublicdata-web = "openuspublicdata_mcp.http_server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

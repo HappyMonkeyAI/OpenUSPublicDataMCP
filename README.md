@@ -27,7 +27,16 @@ This is the US counterpart to `OpenUKPublicDataMCP`, but it deliberately separat
 
 ## Current status
 
-Q2 2026 validation is complete: 16 tools, five curated state portal packs, stdio and Streamable HTTP transport, DynamicMCPProxy catalogue metadata, and 20 passing tests. See `docs/tests/Q2-executive-report.md` for the evidence-based executive snapshot.
+Q2 2026 validation is complete: 16 MCP tools, five curated state portal packs, stdio and Streamable HTTP transport, DynamicMCPProxy catalogue metadata, and a React/Leaflet US discovery explorer. See `docs/tests/Q2-executive-report.md` for the evidence-based executive snapshot.
+
+## Web discovery explorer
+
+```bash
+./scripts/run-web.sh
+# http://127.0.0.1:8787
+```
+
+The explorer maps all 50 states plus DC using approximate label centroids, distinguishes the five curated official state portals, searches the registered federal/state-local source catalogue, and preserves jurisdiction, auth, platform, licence and coverage status. It is a discovery surface—not a claim of complete state/local coverage or analytical boundary data. Development instructions are in `web/README.md`.
 
 ## Quick start
 

@@ -40,6 +40,7 @@ Build an agent-grade MCP gateway for high-value US public data. Start with feder
 - Shared retrying HTTP helper, typed source metadata and state/FIPS resolution.
 - Stdio plus Streamable HTTP transport; HTTP MCP session verified with the MCP SDK.
 - DynamicMCPProxy catalogue artefact and Hermes setup documentation.
+- React/Leaflet US discovery explorer with all states + DC, source catalogue search and curated portal status.
 - Q2 report: `docs/tests/Q2-executive-report.md`.
 
 ## Next build slice
