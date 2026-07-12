@@ -67,7 +67,7 @@ def main() -> None:
     print(f"  {scripts_dir}/ (local coordination scripts)")
     print()
     print("Add this to your AGENTS.md:")
-    print("  cat /home/stephen/.hermes/skills/devops/multi-agent-coordination/templates/AGENTS.md.coordination >> AGENTS.md")
+    print("  cat ~/.hermes/skills/devops/multi-agent-coordination/templates/AGENTS.md.coordination >> AGENTS.md")
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ Initial OpenUSPublicDataMCP bootstrap: clean project boundary, federal-first arc
 
 ## Acceptance evidence
 
-- Repository path: `/home/stephen/projects/OpenUSPublicDataMCP`
+- Repository path: `OpenUSPublicDataMCP`
 - Core tool contract: `src/openuspublicdata_mcp/server.py`
 - Mocked upstream test: `tests/test_data_gov.py`
 - Live federal smoke: USAspending agency references (no key)

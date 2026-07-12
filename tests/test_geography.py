@@ -22,3 +22,13 @@ def test_resolve_state_from_city_string():
 def test_resolve_state_rejects_unknown_location():
     with pytest.raises(ValueError, match="could not resolve"):
         resolve_state("London")
+
+
+def test_resolve_state_from_city_abbreviation_string():
+    result = resolve_state("Austin, TX")
+    assert result["state_code"] == "TX"
+    assert result["state_fips"] == "48"
+
+    result = resolve_state("Seattle, wa")
+    assert result["state_code"] == "WA"
+    assert result["state_fips"] == "53"

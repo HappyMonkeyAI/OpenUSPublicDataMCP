@@ -32,7 +32,7 @@ Q2 2026 validation is complete: 16 tools, five curated state portal packs, stdio
 ## Quick start
 
 ```bash
-cd /home/stephen/projects/OpenUSPublicDataMCP
+cd OpenUSPublicDataMCP
 python3.11 -m venv .venv
 . .venv/bin/activate
 pip install -e '.[dev]'
@@ -62,6 +62,6 @@ curl http://127.0.0.1:8787/health
 The DynamicMCPProxy catalogue entry is in `integrations/dynamic-mcp-proxy-user-catalogue-entry.json`. Hermes can use the stdio server directly:
 
 ```bash
-hermes config set mcp_servers.openuspublicdata.command "/home/stephen/projects/OpenUSPublicDataMCP/.venv/bin/python"
+hermes config set mcp_servers.openuspublicdata.command "/absolute/path/to/OpenUSPublicDataMCP/.venv/bin/python"
 hermes config set mcp_servers.openuspublicdata.args '["-m", "openuspublicdata_mcp.server"]'
 ```
