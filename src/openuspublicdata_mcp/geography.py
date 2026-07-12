@@ -26,6 +26,11 @@ def resolve_state(query: str) -> dict[str, Any]:
         raise ValueError("query must not be empty")
     value = query.strip().lower()
     for code, (name, fips) in STATES.items():
-        if value == code.lower() or value == name.lower() or value.endswith(f", {name.lower()}"):
+        if (
+            value == code.lower()
+            or value == name.lower()
+            or value.endswith(f", {name.lower()}")
+            or value.endswith(f", {code.lower()}")
+        ):
             return {"query": query, "state": name, "state_code": code, "state_fips": fips, "jurisdiction_level": "state"}
     raise ValueError(f"could not resolve a US state from: {query}")

@@ -7,7 +7,7 @@
       "run",
       "--quiet",
       "--project",
-      "/home/stephen/projects/OpenUSPublicDataMCP",
+      "/path/to/OpenUSPublicDataMCP",
       "openuspublicdata-mcp"
     ],
     "tags": ["usa", "government", "public-data", "federal", "state", "socrata", "arcgis", "ckan"],

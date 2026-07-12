@@ -70,12 +70,14 @@ def search_data_gov(query: str, limit: int = 10) -> dict[str, object]:
         raise ValueError("query must not be empty")
     if not 1 <= limit <= 100:
         raise ValueError("limit must be between 1 and 100")
-    response = httpx.get("https://catalog.data.gov/api/3/action/package_search", params={"q": query, "rows": limit}, timeout=20)
-    if response.status_code == 404:
-        raise RuntimeError("Data.gov legacy CKAN package_search endpoint is unavailable; use the site catalogue until a supported API is identified")
-    response.raise_for_status()
-    payload = response.json()
-    return envelope(payload.get("result", {}), {"name": "Data.gov", "url": "https://catalog.data.gov/api/3/action/package_search", "official": True, "jurisdiction": "federal", "auth": "none"})
+    url = "https://catalog.data.gov/api/3/action/package_search"
+    try:
+        payload = request_json("GET", url, params={"q": query, "rows": limit}, timeout=20)
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code == 404:
+            raise RuntimeError("Data.gov legacy CKAN package_search endpoint is unavailable; use the site catalogue until a supported API is identified") from exc
+        raise
+    return envelope(payload.get("result", {}), {"name": "Data.gov", "url": url, "official": True, "jurisdiction": "federal", "auth": "none"})
 
 
 @mcp.tool
