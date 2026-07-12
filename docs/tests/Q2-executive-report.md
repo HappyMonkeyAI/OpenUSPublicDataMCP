@@ -144,7 +144,7 @@ The server can also be registered directly with Hermes using the documented stdi
 Verification commands:
 
 ```bash
-cd /home/stephen/projects/OpenUSPublicDataMCP
+cd OpenUSPublicDataMCP
 .venv/bin/pytest -q
 .venv/bin/python -m compileall -q src tests
 .venv/bin/fastmcp inspect src/openuspublicdata_mcp/server.py:mcp
