@@ -51,6 +51,32 @@
 - Florida: ArcGIS Hub search
 - Add state-specific dataset fixtures and freshness/licence notes.
 
+### Phase 6: USA web discovery explorer
+
+**Goal:** Add a React/Leaflet discovery map that exposes federal sources, all state/FIPS geography, and curated state portals without implying uniform national dataset coverage.
+
+#### Task 6.1 — Explorer contracts and REST surface
+
+- **Create:** `src/openuspublicdata_mcp/explorer.py`, `tests/test_explorer.py`
+- **Modify:** `src/openuspublicdata_mcp/http_server.py`, `pyproject.toml`
+- **Contract:** normalized state map entities, typed layer/source catalogue, source search, and state portal metadata with jurisdiction/auth/licence preserved.
+- **TDD:** focused API tests fail before routes and normalizers are implemented.
+
+#### Task 6.2 — React/Leaflet map
+
+- **Create:** `web/` Vite application and `scripts/run-web.sh`
+- **Behavior:** US state centroid markers, curated-portal highlighting, category/layer controls, source status/counts, federal/state-local discovery search, state detail panel, and attribution-aware dark/light/OSM basemaps.
+- **Constraint:** discovery explorer only; do not fabricate live point layers or claim complete state/local coverage.
+- **TDD:** pure layer/state helpers get Vitest coverage before UI wiring.
+
+#### Task 6.3 — Documentation and verification
+
+- **Modify:** `README.md`, `CONTEXT.md`
+- **Create:** `web/README.md`, `research/notes/openus-map-explorer.md`
+- **Verify:** full pytest, compileall, FastMCP inspect/list, Vitest, Vite production build, REST HTTP probes, and browser visual/interaction smoke.
+
+---
+
 ### Verification gates
 
 ```bash
