@@ -74,6 +74,11 @@ def state_detail(code: str) -> dict[str, Any]:
 
 
 def state_entities() -> list[dict[str, Any]]:
+    missing_centroids = sorted(STATES.keys() - STATE_CENTROIDS.keys())
+    if missing_centroids:
+        missing = ", ".join(missing_centroids)
+        raise ValueError(f"Missing centroids for states: {missing}")
+
     entities = []
     for code, (name, fips) in STATES.items():
         latitude, longitude = STATE_CENTROIDS[code]

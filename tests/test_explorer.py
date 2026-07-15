@@ -3,13 +3,14 @@ from __future__ import annotations
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from openuspublicdata_mcp.explorer import STATE_CENTROIDS, state_entities
 from openuspublicdata_mcp.http_server import app
 
 
 @pytest.mark.asyncio
 async def test_explorer_catalogue_preserves_jurisdiction_and_coverage_status():
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(transport=transport, base_url="https://test") as client:
         response = await client.get("/api/explorer/catalogue")
 
     assert response.status_code == 200
@@ -25,7 +26,7 @@ async def test_explorer_catalogue_preserves_jurisdiction_and_coverage_status():
 @pytest.mark.asyncio
 async def test_state_entities_use_normalized_map_contract():
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(transport=transport, base_url="https://test") as client:
         response = await client.get("/api/explorer/states")
 
     assert response.status_code == 200
@@ -45,7 +46,7 @@ async def test_state_entities_use_normalized_map_contract():
 @pytest.mark.asyncio
 async def test_source_discovery_filters_without_calling_upstream_services():
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(transport=transport, base_url="https://test") as client:
         response = await client.get("/api/explorer/sources", params={"q": "federal"})
 
     assert response.status_code == 200
@@ -59,7 +60,7 @@ async def test_source_discovery_filters_without_calling_upstream_services():
 @pytest.mark.asyncio
 async def test_state_detail_reports_missing_curated_portal_honestly():
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(transport=transport, base_url="https://test") as client:
         response = await client.get("/api/explorer/states/MA")
 
     assert response.status_code == 200
@@ -67,3 +68,16 @@ async def test_state_detail_reports_missing_curated_portal_honestly():
     assert body["state_code"] == "MA"
     assert body["curated_portal"] is None
     assert body["coverage_status"] == "registry_only"
+
+
+def test_state_entities_reports_missing_centroid(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.delitem(STATE_CENTROIDS, "CA")
+
+    with pytest.raises(ValueError, match="Missing centroids for states: CA"):
+        state_entities()
+
+
+def test_state_detail_openapi_documents_not_found_response():
+    responses = app.openapi()["paths"]["/api/explorer/states/{state_code}"]["get"]["responses"]
+
+    assert responses["404"]["description"] == "State not found"

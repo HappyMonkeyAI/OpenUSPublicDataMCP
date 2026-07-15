@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse
@@ -37,7 +38,10 @@ def api_explorer_states() -> dict[str, object]:
     return {"count": len(entities), "entities": entities}
 
 
-@app.get("/api/explorer/states/{state_code}")
+@app.get(
+    "/api/explorer/states/{state_code}",
+    responses={404: {"description": "State not found"}},
+)
 def api_explorer_state(state_code: str) -> dict[str, object]:
     try:
         return state_detail(state_code)
@@ -46,7 +50,7 @@ def api_explorer_state(state_code: str) -> dict[str, object]:
 
 
 @app.get("/api/explorer/sources")
-def api_explorer_sources(q: str = Query("", max_length=120)) -> dict[str, object]:
+def api_explorer_sources(q: Annotated[str, Query(max_length=120)] = "") -> dict[str, object]:
     sources = search_registered_sources(q)
     return {"query": q.strip(), "count": len(sources), "sources": sources}
 

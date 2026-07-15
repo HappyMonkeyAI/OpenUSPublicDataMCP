@@ -6,8 +6,11 @@ import {
   BASEMAPS,
   groupLayers,
   initialLayerState,
+  layerCount,
+  markerRadius,
   markerStyle,
   type BasemapId,
+  type ExplorerCounts,
   type ExplorerLayer,
   type MapEntity,
   type Source,
@@ -21,6 +24,52 @@ function MapFocus({ entity }: { entity: MapEntity | null }) {
     if (entity) map.flyTo([entity.latitude, entity.longitude], entity.id === "AK" || entity.id === "HI" ? 5 : 6);
   }, [entity, map]);
   return null;
+}
+
+type DiscoveryLayersProps = {
+  layers: ExplorerLayer[];
+  enabled: Record<string, boolean>;
+  counts: ExplorerCounts;
+  onToggle: (layerId: ExplorerLayer["id"]) => void;
+};
+
+function DiscoveryLayers({ layers, enabled, counts, onToggle }: DiscoveryLayersProps) {
+  return groupLayers(layers).map(([category, entries]) => (
+    <details open key={category}>
+      <summary>{category}</summary>
+      {entries.map((layer) => (
+        <label className="layer-row" key={layer.id}>
+          <input type="checkbox" checked={enabled[layer.id] || false} onChange={() => onToggle(layer.id)} />
+          <span className={`dot ${layer.id}`} />
+          <span><strong>{layer.label}</strong><small>{layer.coverage_status.replace(/_/g, " ")}</small></span>
+          <b>{layerCount(layer.id, counts)}</b>
+        </label>
+      ))}
+    </details>
+  ));
+}
+
+type StateMarkerProps = {
+  entity: MapEntity;
+  curatedLayerEnabled: boolean;
+  active: boolean;
+  onSelect: (entity: MapEntity) => void;
+};
+
+function StateMarker({ entity, curatedLayerEnabled, active, onSelect }: StateMarkerProps) {
+  const curated = Boolean(entity.properties.curated_portal) && curatedLayerEnabled;
+  const style = markerStyle(curated);
+
+  return (
+    <CircleMarker
+      center={[entity.latitude, entity.longitude]}
+      eventHandlers={{ click: () => onSelect(entity) }}
+      pathOptions={{ ...style, weight: active ? 4 : style.weight }}
+      radius={markerRadius(active, curated)}
+    >
+      <Popup><strong>{entity.title}</strong><br />FIPS {entity.properties.fips}<br />{entity.properties.curated_portal ? `${entity.properties.curated_portal.platform.toUpperCase()} portal registered` : "Registry geography only"}</Popup>
+    </CircleMarker>
+  );
 }
 
 export default function App() {
@@ -84,6 +133,10 @@ export default function App() {
     }
   }
 
+  function toggleLayer(layerId: ExplorerLayer["id"]) {
+    setEnabled((current) => ({ ...current, [layerId]: !current[layerId] }));
+  }
+
   const curatedPortal = selected?.properties.curated_portal;
 
   return (
@@ -111,19 +164,7 @@ export default function App() {
           </div>
           <section>
             <div className="section-title"><h2>Discovery layers</h2><span>REGISTRY</span></div>
-            {groupLayers(layers).map(([category, entries]) => (
-              <details open key={category}>
-                <summary>{category}</summary>
-                {entries.map((layer) => (
-                  <label className="layer-row" key={layer.id}>
-                    <input type="checkbox" checked={enabled[layer.id] || false} onChange={() => setEnabled((current) => ({ ...current, [layer.id]: !current[layer.id] }))} />
-                    <span className={`dot ${layer.id}`} />
-                    <span><strong>{layer.label}</strong><small>{layer.coverage_status.replace(/_/g, " ")}</small></span>
-                    <b>{layer.id === "states" ? counts.states : layer.id === "curated-portals" ? counts.curated : counts.sources}</b>
-                  </label>
-                ))}
-              </details>
-            ))}
+            <DiscoveryLayers layers={layers} enabled={enabled} counts={counts} onToggle={toggleLayer} />
           </section>
           <section className="source-list">
             <div className="section-title"><h2>Source catalogue</h2><span>{visibleSources.length} SHOWN</span></div>
@@ -139,23 +180,24 @@ export default function App() {
         </aside>
 
         <section className="map-panel">
-          <div className="basemap-switcher" role="group" aria-label="Basemap">
+          <fieldset className="basemap-switcher">
+            <legend className="sr-only">Basemap</legend>
             {(Object.entries(BASEMAPS) as Array<[BasemapId, (typeof BASEMAPS)[BasemapId]]>).map(([id, item]) => (
               <button type="button" key={id} className={basemap === id ? "active" : ""} onClick={() => setBasemap(id)}>{item.label}</button>
             ))}
-          </div>
+          </fieldset>
           <div className="map-legend"><span className="legend-curated" /> curated portal <span className="legend-state" /> registry only</div>
           <MapContainer center={US_CENTER} zoom={4} minZoom={3} className="map" scrollWheelZoom>
             <TileLayer attribution={BASEMAPS[basemap].attribution} url={BASEMAPS[basemap].url} />
-            {enabled.states && states.map((entity) => {
-              const curated = Boolean(entity.properties.curated_portal) && enabled["curated-portals"];
-              const active = selected?.id === entity.id;
-              return (
-                <CircleMarker key={entity.id} center={[entity.latitude, entity.longitude]} radius={active ? 12 : curated ? 9 : 6} pathOptions={{ ...markerStyle(curated), weight: active ? 4 : markerStyle(curated).weight }} eventHandlers={{ click: () => void selectState(entity) }}>
-                  <Popup><strong>{entity.title}</strong><br />FIPS {entity.properties.fips}<br />{entity.properties.curated_portal ? `${entity.properties.curated_portal.platform.toUpperCase()} portal registered` : "Registry geography only"}</Popup>
-                </CircleMarker>
-              );
-            })}
+            {enabled.states && states.map((entity) => (
+              <StateMarker
+                key={entity.id}
+                entity={entity}
+                curatedLayerEnabled={Boolean(enabled["curated-portals"])}
+                active={selected?.id === entity.id}
+                onSelect={(item) => void selectState(item)}
+              />
+            ))}
             <MapFocus entity={selected} />
           </MapContainer>
         </section>

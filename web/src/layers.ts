@@ -64,6 +64,12 @@ export const BASEMAPS = {
 
 export type BasemapId = keyof typeof BASEMAPS;
 
+export type ExplorerCounts = {
+  states: number;
+  curated: number;
+  sources: number;
+};
+
 export function groupLayers(layers: ExplorerLayer[]): Array<[string, ExplorerLayer[]]> {
   const grouped = new Map<string, ExplorerLayer[]>();
   for (const layer of layers) grouped.set(layer.category, [...(grouped.get(layer.category) || []), layer]);
@@ -72,6 +78,18 @@ export function groupLayers(layers: ExplorerLayer[]): Array<[string, ExplorerLay
 
 export function initialLayerState(layers: ExplorerLayer[]): Record<string, boolean> {
   return Object.fromEntries(layers.map((layer) => [layer.id, layer.default_enabled]));
+}
+
+export function layerCount(layerId: ExplorerLayer["id"], counts: ExplorerCounts): number {
+  if (layerId === "states") return counts.states;
+  if (layerId === "curated-portals") return counts.curated;
+  return counts.sources;
+}
+
+export function markerRadius(active: boolean, curated: boolean): number {
+  if (active) return 12;
+  if (curated) return 9;
+  return 6;
 }
 
 export function markerStyle(curated: boolean) {

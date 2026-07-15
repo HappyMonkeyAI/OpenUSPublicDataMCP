@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { BASEMAPS, groupLayers, initialLayerState, markerStyle, type ExplorerLayer } from "./layers";
+import {
+  BASEMAPS,
+  groupLayers,
+  initialLayerState,
+  layerCount,
+  markerRadius,
+  markerStyle,
+  type ExplorerLayer,
+} from "./layers";
 
 const layers: ExplorerLayer[] = [
   {
@@ -41,5 +49,19 @@ describe("US explorer layer helpers", () => {
     expect(markerStyle(true).fillColor).not.toBe(markerStyle(false).fillColor);
     expect(Object.keys(BASEMAPS)).toEqual(["dark", "light", "osm"]);
     expect(BASEMAPS.osm.attribution).toContain("OpenStreetMap");
+  });
+
+  it("calculates layer counts without nested conditionals", () => {
+    const counts = { states: 51, curated: 5, sources: 12 };
+
+    expect(layerCount("states", counts)).toBe(51);
+    expect(layerCount("curated-portals", counts)).toBe(5);
+    expect(layerCount("federal-sources", counts)).toBe(12);
+  });
+
+  it("prioritises active marker size over curated marker size", () => {
+    expect(markerRadius(true, true)).toBe(12);
+    expect(markerRadius(false, true)).toBe(9);
+    expect(markerRadius(false, false)).toBe(6);
   });
 });
